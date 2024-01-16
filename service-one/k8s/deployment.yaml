@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-one
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-one
+  template:
+    metadata:
+      labels:
+        app: service-one
+    spec:
+      serviceAccountName: service-one
+      containers:
+      - image: svc-1:v1
+        imagePullPolicy: IfNotPresent
+        name: service-one

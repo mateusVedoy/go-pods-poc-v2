@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-two
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-two
+  template:
+    metadata:
+      labels:
+        app: service-two
+    spec:
+      containers:
+      - image: svc-2:v1
+        imagePullPolicy: IfNotPresent
+        name: service-two
