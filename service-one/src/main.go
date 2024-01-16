@@ -72,7 +72,7 @@ func deletePodByName(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	scallingErr := decreasePods("default", "service-two", 1)
+	scallingErr := decreasePods("default", "service-two")
 
 	if scallingErr != nil {
 		fmt.Fprintf(w, scallingErr.Error())
@@ -107,7 +107,7 @@ func updatePodsAmount(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func decreasePods(namespace, deploymentName string, amount int32) error {
+func decreasePods(namespace, deploymentName string) error {
 	clientset, clientsetErr := kubeconfig()
 
 	if clientsetErr != nil {
@@ -122,10 +122,7 @@ func decreasePods(namespace, deploymentName string, amount int32) error {
 		return errors.New(fmt.Sprintf("Error getting deployment. Reason: %v", deplErr.Error()))
 	}
 
-	replicas := *deployment.Spec.Replicas
-	nextReplica := replicas - amount
-
-	deployment.Spec.Replicas = &nextReplica
+	*deployment.Spec.Replicas -= 1
 
 	_, updateErr := deploymentClient.Update(context.TODO(), deployment, metav1.UpdateOptions{})
 
