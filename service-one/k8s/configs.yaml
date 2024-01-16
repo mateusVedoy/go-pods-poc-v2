@@ -1,0 +1,33 @@
+#Indica que pod terá permissões dentro do cluster
+kind: ServiceAccount 
+apiVersion: v1
+metadata:
+  name: service-one
+  namespace: default
+---
+#Indica as configs de permissões
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: service-one
+  namespace: default
+rules:
+  - apiGroups: ["apps", "extensions", "", "autoscaling"]
+    resources: ["deployments", "pods", "horizontalpodautoscalers"]
+    # resourceNames: ["service-one"]
+    verbs: ["get", "patch", "list", "watch", "update", "delete"]
+---
+#Cria o bind entre as duas configs acima
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: service-one
+  namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: service-one
+subjects:
+  - kind: ServiceAccount
+    name: service-one
+    namespace: default
