@@ -7,34 +7,73 @@ Este projeto é uma poc em Go que busca gerenciar pods de uma aplicação a part
 * Go versão 20
 * [Kind](https://kind.sigs.k8s.io/)
 * [Kubectl](https://kubernetes.io/pt-br/docs/tasks/tools/#kubectl)
+* Docker
+* Make
+
 
 ## Formas de rodar
-* Localmente
-* Cluster
 
-### Rodando localmente
-[Doc Aqui](./docs/Local.README.md)
+### Makefile
 
-### Rodando no cluster
-[Doc Aqui](./docs/cluster.README.md)
+Criar cluster
+
+``` 
+make cluster 
+```
+
+Criar imagens docker
+
+```
+make docker-img
+```
+
+Carregar imagens para cluster
+
+```
+make docker-img-to-cluster
+```
+
+Aplicar configurações de k8s ao cluster
+
+```
+make set-pods
+```
+
+Expor portas
+
+```
+make port-forward
+```
+
+OBS: no arquivo makefile há também chamadas para desfazer as configurações acima.
+
+## Testando via Rest
+
+### Scaling de pods
+
+```
+POST /service-two/pods/{type}/amount/update/{amount}
+```
+* type é deployment ou hpa e depende de qual replica você deseja ajustar
+* amount é será o novo valor de réplicas de pods
+
+### Delete de pod
+
+```
+POST /service-two/pods/delete/name/{identifier}
+```
+* identifier é o nome do pod
 
 ## Respostas
 
 #### Sucesso
 
-#### /pods/amount/update/{amount} 
+#### /service-two/pods/{type}/amount/update/{amount} 
 ```
 Pods updated: {amount}
 ```
 
-#### /health
-```
-Hey, I'm alive and running at local machine
-```
-
-```
-Hey, I'm alive and running at Cluster
-```
+#### /service-two/pods/delete/name/{identifier}
 
 #### Erro
 Dependerá de onde estourar erro, mas via de regra virá uma string contendo uma descrição do erro acompanhado de sua causa.
